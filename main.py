@@ -51,7 +51,7 @@ while(True):
     rpi.start_com()
     while(True):
         distance=get_dist()
-        char=rpi.com_continue(str(distance))
+        char=rpi.com_continue(str(distance)+"cm")
         print(char)
         if char==None:
             time.sleep(0.01)
