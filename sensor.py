@@ -12,8 +12,12 @@ def distance():
     GPIO.output(GPIO_TRIGGER, False)
     StartTime = time.time()
     StopTime = time.time()
+    ct=0
     while GPIO.input(GPIO_ECHO) == 0:
         StartTime = time.time()
+        ct+=1
+        if ct>5000:
+            return(0)
     while GPIO.input(GPIO_ECHO) == 1:
         StopTime = time.time()
     TimeElapsed = StopTime - StartTime
