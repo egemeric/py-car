@@ -8,8 +8,9 @@ def set_pins(left_,right_,rev_left,rev_right):
     gpio.setup(right_,gpio.OUT)
     gpio.setup(rev_left,gpio.OUT)
     gpio.setup(rev_right,gpio.OUT)
-    gpio.setup(16,gpio.OUT) #led pin
+    gpio.setup(16,gpio.OUT) #status led pin
     gpio.output(16,gpio.HIGH)
+    gpio.setup(12,gpio.OUT) #for motor driver's enable pin you can uncomment
     gpio.setwarnings(False)
     print("Gpios has been seted:",left_,",",right_)
 def d_right(right_):
@@ -40,6 +41,10 @@ def d_reverse(rev_left,rev_right):
     gpio.output(rev_right,gpio.LOW)
 def get_dist():
     return(sensor.main())
+def enable_driver():
+    gpio.output(12,gpio.LOW)
+def disable_driver():
+    gpio.output(12,gpio.HIGH)
 right_pin=20
 left_pin=21
 left_reverse=19
@@ -50,6 +55,7 @@ rpi=servercar.cgi_gpio(8888) #start server on port tcp 8888
 while(True):
     rpi.start_com()
     while(True):
+        enable_driver()
         distance=get_dist()
         char=rpi.com_continue(str(distance)+"cm")
         print(char)
@@ -78,6 +84,7 @@ while(True):
             print("invalid command")
             time.sleep(0.1)
             continue
+    disable_driver()
     if(char=="T"):
         break
 
