@@ -19,19 +19,26 @@ class motor_driver():
         gpio.setup(self.__led,gpio.OUT) #status led pin
         gpio.setup(self.__relay,gpio.OUT) #for motor driver's enable pin you can uncomment
         gpio.setwarnings(False)
+        self.last_direction=None
         print("Gpios has been seted!")
 
     def d_right(self,worktime=0.2):
-        gpio.output(self.__right,gpio.HIGH)
-        print("turn right")
-        time.sleep(worktime)
-        gpio.output(self.__right,gpio.LOW)
+        if(self.last_direction==True or self.last_direction==None):
+            gpio.output(self.__right,gpio.HIGH)
+            print("turn right")
+            time.sleep(worktime)
+            gpio.output(self.__right,gpio.LOW)
+        else:
+            self.d_rev_right(worktime)
 
     def d_left(self,worktime=0.2):
-        gpio.output(self.__left,gpio.HIGH)
-        print("turn left")
-        time.sleep(worktime)
-        gpio.output(self.__left,gpio.LOW)
+        if(self.last_direction==True or self.last_direction==None):
+            gpio.output(self.__left,gpio.HIGH)
+            print("turn left")
+            time.sleep(worktime)
+            gpio.output(self.__left,gpio.LOW)
+        else:
+            self.d_rev_left(worktime)
 
     def d_forward(self,worktime=0.2):
         gpio.output(self.__left,gpio.HIGH)
@@ -40,6 +47,7 @@ class motor_driver():
         time.sleep(worktime)
         gpio.output(self.__left,gpio.LOW)
         gpio.output(self.__right,gpio.LOW)
+        self.last_direction=True
 
     def d_stop(self):
         gpio.output(self.__left,gpio.LOW)
@@ -50,6 +58,17 @@ class motor_driver():
         gpio.output(self.__reverseright,gpio.HIGH)
         time.sleep(worktime)
         gpio.output(self.__reverseleft,gpio.LOW)
+        gpio.output(self.__reverseright,gpio.LOW)
+        self.last_direction=False
+    
+    def d_rev_left(self,worktime=0.2):
+        gpio.output(self.__reverseleft,gpio.HIGH)
+        time.sleep(worktime)
+        gpio.output(self.__reverseleft,gpio.LOW)
+    
+    def d_rev_right(self,worktime=0.2):
+        gpio.output(self.__reverseright,gpio.HIGH)
+        time.sleep(worktime)
         gpio.output(self.__reverseright,gpio.LOW)
 
     def get_dist(self):
