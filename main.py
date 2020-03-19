@@ -17,7 +17,7 @@ class motor_driver():
         gpio.setup(self.__reverseleft,gpio.OUT)
         gpio.setup(self.__reverseright,gpio.OUT)
         gpio.setup(self.__led,gpio.OUT) #status led pin
-        gpio.setup(self.relay,gpio.OUT) #for motor driver's enable pin you can uncomment
+        gpio.setup(self.__relay,gpio.OUT) #for motor driver's enable pin you can uncomment
         gpio.setwarnings(False)
         print("Gpios has been seted!")
 
@@ -37,7 +37,7 @@ class motor_driver():
         gpio.output(self.__left,gpio.HIGH)
         gpio.output(self.__right,gpio.HIGH)
         print("turn forward")
-        time.sleep(worktime=0.2)
+        time.sleep(worktime)
         gpio.output(self.__left,gpio.LOW)
         gpio.output(self.__right,gpio.LOW)
 
@@ -45,7 +45,7 @@ class motor_driver():
         gpio.output(self.__left,gpio.LOW)
         gpio.output(self.__right,gpio.LOW)
 
-    def d_reverse(slef,worktime=0.2):
+    def d_reverse(self,worktime=0.2):
         gpio.output(self.__reverseleft,gpio.HIGH)
         gpio.output(self.__reverseright,gpio.HIGH)
         time.sleep(worktime)
@@ -91,10 +91,10 @@ while(True):
             break
         char=char[1]
         if(char=="w"):
-            if(distance>35):
+            if(distance>40):
                 motor.d_forward()
-            elif(distance>25 and distance<36):
-                motor.d_forward(0.1)
+            elif(distance>10 and distance<41):
+                motor.d_forward(0.01)
             else:
                 motor.d_stop()
                 print("NOT SAFE!!")
