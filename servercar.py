@@ -1,5 +1,4 @@
 import socket
-import time
 class server():
     def __init__(self,port_num):
         self.port_num=port_num
@@ -16,22 +15,22 @@ class server():
             print(f"Socket Creation Error:{err}")
     def handle_tcp(self):
         self.client,self.address=self.s.accept()
-        self.client.settimeout(10)
+        self.client.settimeout(10) #set timeout for 10 sec
         print(f"Yeni Baglanti:{self.address}")
     def com(self,send_data):
         try:
-            self.data=self.client.recv(1024).decode()
-            self.data=self.data.split(",")
-            send_data=","+send_data+","+self.data[2]
+            self.recv_data=self.client.recv(1024).decode()
+            self.parse_data()
+            send_data=","+send_data+","+self.time_info 
 
             self.client.send(send_data.encode())
 
-            if(self.data[0]!="cmd"):
-                print(f"{self.data[0]}:")
+            if(self.client_header!="cmd"):
+                print(f"{self.client_header}:")
                 self.client.close()
                 return None
             else:
-                return self.data
+                return self.command_char,self.option_car
         except(OSError):
             print("Unkown client")
             return None
@@ -45,6 +44,18 @@ class server():
     def close_stream(self):
         print("closed")
         self.client.close()
+    
+    def parse_data(self):
+        self.recv_data=self.recv_data.split(",")
+        self.client_header=self.recv_data[0]
+        self.command_char=self.recv_data[1]
+        self.time_info=self.recv_data[2]
+        if(len(self.recv_data)>3):
+            self.option_car=self.recv_data[3]
+        else:
+            self.option_car=None
+            pass
+        
 
 class cgi_gpio(server):
 
@@ -59,6 +70,4 @@ class cgi_gpio(server):
             return dat
 
 
-print("ok")
-
-
+print("servercar.py has imported!")

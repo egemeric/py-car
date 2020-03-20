@@ -16,9 +16,9 @@ class client():
         self.ip_=ip_
         self.s = socket.socket()
         self.s.connect((self.ip_,self.portnum_))
-    def handle_con(self,char):
+    def handle_con(self,char,option="0"):
         
-        str="cmd,"+char+self.send_client_time()
+        str="cmd,"+char+self.send_client_time()+","+option
         self.s.send(str.encode())
         self.res_raw=self.s.recv(1024) #get raw data
         self.parse_data() #you need to parse, to calc ping or to access parsed data (self.result) 
@@ -37,7 +37,7 @@ class client():
         self.ping=time.time()-float(self.result[2])
         return(self.ping)
 
-server_ip="10.1.1.4"
+server_ip="10.1.1.8"
 port_num=8888
     
 cli=client(server_ip,int(port_num)) #start com cannel
@@ -47,12 +47,15 @@ while True:
         cli.handle_con(ch)
         cli.close_con()
         break
-    elif(ch=="O"): # will be options
-        pass
         
     else:
+        if(ch==" "): # will be options
+            option=input("Enter Option char:")
+        else:
+            option="0"
+        
         try:
-            cli.handle_con(ch)
+            cli.handle_con(ch,option)
             res=cli.result
             print (f"sensor:{res[1]}  --tcp latency=%.3fms"%(cli.calc_ping()))
             time.sleep(0.1)

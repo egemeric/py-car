@@ -101,14 +101,16 @@ while(True):
     rpi.start_com()
     while(True):
         distance=motor.get_dist()
-        char=rpi.com_continue(str(distance)+"cm")
+        dat_tuple=rpi.com_continue(str(distance)+"cm")
         motor.enable_driver()
         motor.enable_led()
-        print(char)
-        if char==None:
+        if dat_tuple==None:
             time.sleep(0.01)
             break
-        char=char[1]
+        else:
+            char=dat_tuple[0]
+            option=dat_tuple[1] #options will be added
+            
         if(char=="w"):
             if(distance>40):
                 motor.d_forward()
@@ -129,7 +131,7 @@ while(True):
         elif(char=="T"):
             break
         else:
-            print("invalid command")
+            print("notihing happened")
             time.sleep(0.1)
             continue
     motor.disable_driver()
