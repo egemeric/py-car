@@ -37,7 +37,7 @@ class client():
         self.ping=time.time()-float(self.result[2])
         return(self.ping)
 
-server_ip="10.1.1.8"
+server_ip="10.1.1.4"
 port_num=8888
     
 cli=client(server_ip,int(port_num)) #start com cannel
