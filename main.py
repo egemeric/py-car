@@ -12,6 +12,7 @@ class motor_driver():
         self.__reverseright=reverseright_pin
         self.__led=led_pin
         self.__relay=relay_pin
+        self.set_360=None # sharp Turn enable
         gpio.setup(self.__left,gpio.OUT)
         gpio.setup(self.__right,gpio.OUT)
         gpio.setup(self.__reverseleft,gpio.OUT)
@@ -19,26 +20,41 @@ class motor_driver():
         gpio.setup(self.__led,gpio.OUT) #status led pin
         gpio.setup(self.__relay,gpio.OUT) #for motor driver's enable pin you can uncomment
         gpio.setwarnings(False)
-        self.last_direction=None
+        self.last_direction=None #if car goes Forward it's true (for reverse and forward movement(right or left) )
         print("Gpios has been seted!")
 
+    
     def d_right(self,worktime=0.2):
         if(self.last_direction==True or self.last_direction==None):
-            gpio.output(self.__right,gpio.HIGH)
-            print("turn right")
-            time.sleep(worktime)
-            gpio.output(self.__right,gpio.LOW)
+            if(self.set_360==None or self.set_360==False):
+                gpio.output(self.__right,gpio.HIGH)
+                print("turn right")
+                time.sleep(worktime)
+                gpio.output(self.__right,gpio.LOW)
+            else: #Sharp Turn right
+                gpio.output(self.__right,gpio.HIGH)
+                gpio.output(self.__reverseleft,gpio.HIGH)
+                time.sleep(worktime)
+                gpio.output(self.__right,gpio.LOW)
+                gpio.output(self.__reverseleft,gpio.LOW)
         else:
-            self.d_rev_right(worktime)
+            self.d_rev_right(worktime) #reverse right turn
 
     def d_left(self,worktime=0.2):
         if(self.last_direction==True or self.last_direction==None):
-            gpio.output(self.__left,gpio.HIGH)
-            print("turn left")
-            time.sleep(worktime)
-            gpio.output(self.__left,gpio.LOW)
+            if(self.set_360==None or self.set_360==False):
+                gpio.output(self.__left,gpio.HIGH)
+                print("turn left")
+                time.sleep(worktime)
+                gpio.output(self.__left,gpio.LOW)
+            else: #sharp left turn
+                gpio.output(self.__left,gpio.HIGH)
+                gpio.output(self.__reverseright,gpio.HIGH)
+                time.sleep(worktime)
+                gpio.output(self.__left,gpio.LOW)
+                gpio.output(self.__reverseright,gpio.LOW)
         else:
-            self.d_rev_left(worktime)
+            self.d_rev_left(worktime) #reverse left turn
 
     def d_forward(self,worktime=0.2):
         gpio.output(self.__left,gpio.HIGH)
@@ -87,6 +103,27 @@ class motor_driver():
     def disable_led(self):
         gpio.output(self.__led,gpio.LOW)
         self.ledstatus=False
+    def set_option_car(self,option):
+        if(option==0):
+            return(None)#nothinng has setted
+        else:
+            option=option.split("=")
+            if(option[0]=="set"or option[0]=="unset"):
+                pass #go to set variables
+            else:
+                return(False) #wrong language
+        
+        if(option[0]=="set"):
+            if option[1]=="360":
+                self.set_360=True
+                return(True) # Ok
+        elif(option[0]=="unset"):
+            if option[1]=="360":
+                self.set_360=False
+                return(True) #Ok
+       
+            
+        
 right_pin=20
 left_pin=21
 left_reverse=19
@@ -110,6 +147,7 @@ while(True):
         else:
             char=dat_tuple[0]
             option=dat_tuple[1] #options will be added
+            motor.set_option_car(option)
             
         if(char=="w"):
             if(distance>40):
