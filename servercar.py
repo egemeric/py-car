@@ -32,7 +32,7 @@ class server():
             else:
                 return self.command_char,self.option_car
         except(OSError):
-            print("Unkown client")
+            print("Unkown client or connection has lost")
             return None
         except(UnicodeDecodeError):
             print("'utf-8' codec can't decode (can be caused multiple connections)")
