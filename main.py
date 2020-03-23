@@ -33,10 +33,10 @@ class motor_driver():
                 gpio.output(self.__right,gpio.LOW)
             else: #Sharp Turn right
                 gpio.output(self.__right,gpio.HIGH)
-                gpio.output(self.__reverseleft,gpio.HIGH)
+                gpio.output(self.__reverseright,gpio.HIGH)
                 time.sleep(worktime)
                 gpio.output(self.__right,gpio.LOW)
-                gpio.output(self.__reverseleft,gpio.LOW)
+                gpio.output(self.__reverseright,gpio.LOW)
         else:
             self.d_rev_right(worktime) #reverse right turn
 
@@ -49,10 +49,10 @@ class motor_driver():
                 gpio.output(self.__left,gpio.LOW)
             else: #sharp left turn
                 gpio.output(self.__left,gpio.HIGH)
-                gpio.output(self.__reverseright,gpio.HIGH)
+                gpio.output(self.__reverseleft,gpio.HIGH)
                 time.sleep(worktime)
                 gpio.output(self.__left,gpio.LOW)
-                gpio.output(self.__reverseright,gpio.LOW)
+                gpio.output(self.__reverseleft,gpio.LOW)
         else:
             self.d_rev_left(worktime) #reverse left turn
 
@@ -147,7 +147,8 @@ while(True):
         else:
             char=dat_tuple[0]
             option=dat_tuple[1] #options will be added
-            motor.set_option_car(option)
+            print("option=",option,"char=",char)
+            op_res= motor.set_option_car(option)
             
         if(char=="w"):
             if(distance>40):
@@ -169,8 +170,12 @@ while(True):
         elif(char=="T"):
             break
         else:
-            print("notihing happened")
-            time.sleep(0.1)
+            if op_res==None:
+                print("no option entry")
+            elif op_res==True:
+                print("Option has been setted")
+            else:
+                print("wrong option language")
             continue
     motor.disable_driver()
     motor.disable_led()
